@@ -65,7 +65,7 @@
 						<header class="major">
 							<h2>Introduction</h2>
 						</header>
-						<p>For offline analysis, neuro network algorithm can provide high performance on classification; but it is insufficient. In order to obtain even higher accuracy (93% or above), neuro-fuzzy system which consists of fuzzy-inference system and neuro-adaptive learning is the best candidate.</p>
+						<p>For offline analysis, neuro network algorithm can provide high performance on classification; but it is insufficient. In order to obtain even higher accuracy <b>(93% or above)</b>, <b>Neuro-Fuzzy system</b> which consists of <b>Fuzzy-Inference System</b> and <b>Neuro-Adaptive Learning</b> is the best candidate.</p>
 						<ul class="actions">
 							<li><a href="#two" class="button next scrolly">Get Started</a></li>
 						</ul>
@@ -74,7 +74,41 @@
 						<img class="mySlides" src="Figure/ANFIS_work.png" style="max-width: 100%">
 					</div>
 					<div class="inner">
-						<center><h1>Coming Soon</h1></center>
+						<p><b>Fuzzy inference</b> is the process of creating the mapping from a given input to an output using fuzzy logic. It looks at the world in imprecise terms, in the same way that our brain looks at information, then responds with precise actions. Fuzzy logic is different from classical logic in that the statements are no longer true or false, on or off. Instead, a statement can assume any real value between 0 and 1. <br><br>
+						Generally, Fuzzy inference process can be divided into three steps: <b>Fuzzification</b> which translates input into truth values, <b>Rule Evaluation</b> which computes output truth values, and <b>Defuzzification</b> which transfers truth values into output. <br><br>
+						In detailed, we need to take the inputs and determine membership functions  first. Secondly, fuzzify the inputs using membership functions. Thirdly, combine the inputs according to the rules to build the rule’s strength. Next, find the consequence of the rule. Fifth, aggregate the consequences to get output contribution. Finally, defuzzify the output. The scripts are written in <b>MATLAB</b> with Fuzzy Logic Toolbox.
+						<pre>
+						<code>
+<font color="grey">% Final Project --- Applied Intelligence for Engineering
+% Neuro-Fuzzy Inference System
+% Generate the FIS using subtractive clustering</font>
+myfis = genfis2(train,trout,0.2); 
+<font color="grey">% Assign names to inputs and outputs</font>
+myfis = setfis(myfis,'input',1,'name','Channel_MNF');
+myfis = setfis(myfis,'input',2,'name','Channel_RMS');
+myfis = setfis(myfis,'input',3,'name','Channel_ZC');
+myfis = setfis(myfis,'input',4,'name','Channe2_MNF');
+myfis = setfis(myfis,'input',5,'name','Channe2_RMS');
+myfis = setfis(myfis,'input',6,'name','Channe2_ZC');
+myfis = setfis(myfis,'output',1,'name','OutputValue');
+						</code>
+					    </pre>
+						Afterwards, we use <b>Neuro-Adaptive Learning</b> to train our FIS by extracting a set of rules that models the data behavior. It uses a hybrid learning algorithm, which combines the <b>least squares</b> and <b>back-propagation gradient descent</b> methods, to tune the parameter of a fuzzy inference system. After training, we can use test data to evaluate the accuracy of our classifier. 
+						</p>
+						<pre>
+						<code>
+<font color="grey">% Train the FIS using Adaptive Neuro-Fuzzy Inference System (ANFIS) </font>
+trnData = [train trout];
+trnOpt = 100; dispOpt = [0 1 0 0]; % display error values on Command Window
+[classifier,error] = anfis(trnData,myfis,trnOpt,dispOpt);
+<font color="grey">% Using checking data to calculate the accuracy</font>
+output = evalfis(tesin,classifier);
+for i = 1:length(output)
+    finaloutput(i) = output2label(output(i));
+end
+				</code>
+			    </pre> 
+					<p>Feel free to <a href="index.html#two" class="next scrolly special fit">contact me</a> for more details.</p>
 					</div>
 
 				</section>
