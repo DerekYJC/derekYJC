@@ -76,7 +76,57 @@
 						<img class="mySlides" src="Figure/EEG_ECoG.JPG" style="max-width: 100%">
 					</div>
 					<div class="inner">
-						<center><h1>Coming Soon</h1></center>
+						<h3>Master Thesis: <span style="text-decoration: underline;">Signal Translation between EEG and ECoG to improve non-invasive based BCI performance</span></h3>
+						<p>An electroencephalography (EEG) / electrocorticography (ECoG) inverse model for the <b>Brain-Computer Interface (BCI)</b> was developed, and the analysis of the signals was simulated in Python environment. The inverse solution, in an attempt to estimate ECoG from EEG, can significantly improve the performance of noninvasive based BCI. <b>NonLinear Principal Component Analysis (NLPCA)</b> is employed to reduce the complexity of computation. Here I used <b>keras</b> to build an autoencoder. </p>
+						<pre>
+						<code>
+<b>def NLPCA(n_PC):</b> 				    
+    <font color="grey">## Autoencoder (Auto-associative neural network) 
+    # n_PC: number of principle components
+    # Input placeholder</font>
+    input_model = Input(shape=(16,))
+    <font color="grey"># 1st to 2nd layer</font>
+    encoded_1 = Dense(64, activation='tanh', use_bias=True)(input_model)
+    <font color="grey"># 2nd to 3rd layer (PC)</font>
+    encoded_2 = Dense(n_PC, activation='linear', use_bias=True)(encoded_1)
+    <font color="grey"># 3rd to 4th layer</font>
+    decoded_1 = Dense(64, activation='tanh', use_bias=True)(encoded_2)
+    <font color="grey"># 4th to 5th layer (Output)</font>
+    decoded_2 = Dense(16, activation='linear', use_bias=True)(decoded_1)
+    <font color="grey"># Create a separate model: autoencoder, encoder, and decoder</font>
+    autoencoder = Model(input_model, decoded_2)
+    <font color="grey"># encoder</font>
+    encoder = Model(input_model, encoded_2)
+    <font color="grey"># decoder</font>
+    encoded_input = Input(shape=(n_PC,))
+    decoder_layer_1 = autoencoder.layers[-2]
+    decoder_layer_2 = autoencoder.layers[-1]
+    decoded_output = decoder_layer_1(encoded_input)
+    decoded_output = decoder_layer_2(decoded_output)
+    decoder = Model(encoded_input, decoded_output)
+    <font color="grey"># Configure the model using mean_squared_error loss and Stochastic gradient descent optimizer</font>
+    autoencoder.compile(optimizer='Adamax', loss='mean_squared_error', metrics=['accuracy'])
+    <font color="grey"># Train the model using the training data</font>
+    history = autoencoder.fit(ECoG_Data_Train.T, ECoG_Data_Train.T, 
+                    epochs=1000,
+                    batch_size=1000,
+                    shuffle=True,
+                    validation_data=(ECoG_Data_Test.T, ECoG_Data_Test.T)).history
+    
+    <font color="grey"># Save the model</font>
+    autoencoder.save('Autoencoder_' + EEGchannel_name + '.h5')
+    encoder.save('DimReduction_' + EEGchannel_name + '.h5')
+    decoder.save('invDimReduction_' + EEGchannel_name + '.h5')
+    with open('trainHistoryDict_NLPCA_' + EEGchannel_name, 'wb') as file_pi:
+            pickle.dump(history, file_pi)
+				</code>
+			    </pre>
+				<p>Forward model is then derived from the electro-physiological perspective to capture the dynamic of the signals. To represent nonlinear approximations, a <b>Neuro-Bond-Graph (NBG)</b> approach is introduced to model both the system dynamics and the nonlinearity with a <b>Sparse Recurrent Neural Network</b> in a more efficient way.</p>
+				<div id="two" class="w3-content w3-section" style="max-width: 40em">
+					<img src="Figure/NBG.JPG" style="max-width: 100%">
+				</div>
+				<br>
+				<p>Inverse solution is then established based on forward model architecture integrating with the <b>de-mapping part of NLPCA</b>. The simulation results are demonstrated by the comparison between original signals and reconstructed signals from our model. More details can be referred to my <b>Master Thesis</b>.</p>
 					</div>
 
 				</section>
